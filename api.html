@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Homes - Helper Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://images.pexels.com/photos/2581922/pexels-photo-2581922.jpeg?auto=compress&cs=tinysrgb&w=800') no-repeat center center fixed;
+            background-size: cover;
+            color: orange;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 50px auto;
+            background: black;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border-bottom: 1px solid orange;
+            padding: 10px;
+            text-align: left;
+        }
+        .input-box {
+            display: flex;
+            margin-top: 10px;
+        }
+        .input-box input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        .input-box button {
+            padding: 10px;
+            background-color: orange;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Happy Homes - Helper Bot</h1>
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox">
+            <p><strong>Bot:</strong> Hi! How can I help you?</p>
+        </div>
+        <div class="input-box">
+            <input type="text" id="userInput" placeholder="Ask me anything...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            let inputField = document.getElementById("userInput");
+            let chatBox = document.getElementById("chatBox");
+            let userMessage = inputField.value.trim();
+
+            if (userMessage === "") return;
+
+            chatBox.innerHTML += `<p><strong>You:</strong> ${userMessage}</p>`;
+            chatBox.innerHTML += `<p><strong>Bot:</strong> Processing...</p>`;
+            inputField.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                let response = await fetch("https://api.openai.com/v1/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer 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"
+                    },
+                    body: JSON.stringify({
+                        model: "text-davinci-003",
+                        prompt: userMessage,
+                        max_tokens: 100
+                    })
+                });
+                let data = await response.json();
+                chatBox.innerHTML += `<p><strong>Bot:</strong> ${data.choices[0].text.trim()}</p>`;
+            } catch (error) {
+                chatBox.innerHTML += `<p><strong>Bot:</strong> Sorry, I couldn't get an answer right now.</p>`;
+            }
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
