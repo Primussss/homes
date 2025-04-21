@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AuthLayout from '../components/AuthLayout.jsx'
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter.jsx'
+import axios from 'axios';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -27,21 +28,27 @@ const SignUp = () => {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!validateForm()) return
+      e.preventDefault();
+      if (!validateForm()) return;
     
-    setIsSubmitting(true)
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log('Signup successful', formData)
-      navigate('/login')
-    } catch (error) {
-      setErrors({ submit: 'Signup failed' })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+      setIsSubmitting(true);
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/signup', {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        });
+    
+        console.log('Signup successful:', response.data);
+        navigate('/login');  // Redirect after success
+      } catch (error) {
+        console.error(error);
+        setErrors({ submit: error.response?.data?.message || 'Signup failed' });
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+    
 
   const handleChange = (e) => {
     const { name, value } = e.target

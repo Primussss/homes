@@ -21,13 +21,16 @@ const Navbar = () => {
           <li><Link to="/rent">Rent</Link></li>
           <li><Link to="/about">About Us</Link></li>
           <li><Link to="/contact">Contact Us</Link></li>
-
+         
         </ul>
 
         {/* Icons Section */}
         <div className="nav-icons">
           <FaUser className="icon" />
+          <Link to="/login">
           <span className="login-text">Login</span>
+          </Link>
+          
           <FaPhone className="icon phone-icon" />
           <span className="phone-number">(257) 388-6895</span>
         </div>

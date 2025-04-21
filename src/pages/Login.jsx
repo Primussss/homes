@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthLayout from '../components/AuthLayout.jsx'
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -20,21 +21,30 @@ const Login = () => {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!validateForm()) return
+      e.preventDefault();
+      if (!validateForm()) return;
     
-    setIsSubmitting(true)
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log('Login successful', { email, password, remember })
-      navigate('/')
-    } catch (error) {
-      setErrors({ submit: 'Invalid credentials' })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+      setIsSubmitting(true);
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/login', {
+          email,
+          password
+        });
+    
+        console.log('Login successful:', response.data);
+    
+        // You can store the token or user info like this:
+        localStorage.setItem('token', response.data.token);
+        
+        navigate('/');  // Redirect to home after successful login
+      } catch (error) {
+        console.error(error);
+        setErrors({ submit: error.response?.data?.message || 'Invalid credentials' });
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+    
 
   return (
     <AuthLayout title="Welcome Back" isLogin={true}>
